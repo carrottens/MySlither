@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,7 +25,7 @@ import org.java_websocket.handshake.ServerHandshake;
 final class MySlitherWebSocketClient extends WebSocketClient {
 
     private static final Map<String, String> HEADER = new LinkedHashMap<>();
-    private static final byte[] DATA_PING = new byte[]{(byte) 251};
+    private static final byte[] DATA_PING = new byte[]{(byte) 251 };
     private static final byte[] DATA_BOOST_START = new byte[]{(byte) 253};
     private static final byte[] DATA_BOOST_STOP = new byte[]{(byte) 254};
     private static final double ANGLE_CONSTANT = 16777215;
@@ -103,9 +104,11 @@ final class MySlitherWebSocketClient extends WebSocketClient {
             return;
         }
         int[] data = new int[b.length];
+
         for (int i = 0; i < b.length; i++) {
             data[i] = b[i] & 0xFF;
         }
+
         char cmd = (char) data[2];
         switch (cmd) {
             case '6':

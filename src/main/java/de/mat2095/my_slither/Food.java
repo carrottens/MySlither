@@ -1,7 +1,7 @@
 package de.mat2095.my_slither;
 
 
-class Food {
+public class Food {
 
     final int x, y;
     private final double size;

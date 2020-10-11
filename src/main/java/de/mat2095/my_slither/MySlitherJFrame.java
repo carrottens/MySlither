@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import localserver.SlitherServerThread;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Timer;
@@ -355,7 +358,15 @@ final class MySlitherJFrame extends JFrame {
             server.setText(client.getURI().toString());
         } else {
             try {
-                client = new MySlitherWebSocketClient(new URI(server.getText()), this);
+
+                // Exception case for server name
+                String serverName = server.getText();
+                if (serverName.equalsIgnoreCase("localhost")) {
+                    new SlitherServerThread().start();
+                    serverName = "ws://localhost:8887";
+                }
+
+                client = new MySlitherWebSocketClient(new URI(serverName), this);
             } catch (URISyntaxException ex) {
                 log("invalid server");
                 setStatus(Status.DISCONNECTED);
