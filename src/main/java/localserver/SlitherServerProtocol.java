@@ -1,8 +1,12 @@
 package localserver;
 
+import de.mat2095.my_slither.Food;
+import de.mat2095.my_slither.Snake;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Slither.io Protocol -> https://github.com/ClitherProject/Slither.io-Protocol/blob/master/Protocol.md
@@ -23,11 +27,47 @@ interface SlitherServerProtocol {
     double CST = 0.43;
     int PROTOCOL_VERSION = 11;
 
+    int[] secret = secret();
+
+    /**
+     * Creates the secret message
+     *
+     */
+    static int[] secret() {
+       String secret = "IneedanotherstorySomethingtogetoffmychestMylifegetskindaboringNeedsomethingthatIcanconfess'TilallmysleevesarestainedredFromallthetruththatI'vesaidComebyithonestlyIswearThoughtyousawmewink,noI'vebeenonthebrink,soTellmewhatyouwanttohearSomethingthatwilllightthoseearsSickofalltheinsincereSoI'mgonnagiveallmysecretsawayThistimedon'tneedanotherperfectlieDon'tcareifcriticseverjumpinlineI'mgonnagiveallmysecretsawayMyGod,amazinghowwegotthisfarIt'slikewe'rechasingallthosestarsWho'sdrivingshinybigblackcarsAndeverydayIseethenewsAlltheproblemsthatwecouldsolveAndwhenasituationrisesJustwriteitintoanalbumSenditstraighttogoldButIdon'treallylikemyflow,no,soTellmewhatyouwanttohearSomethingthatwilllightthoseearsSickofalltheinsincereSoI'mgonnagiveallmysecretsawayThistime,don'tneedanotherperfectlieDon'tcareifcriticseverjumpinlineI'mgonnagiveallmysecretsawayOh,gotnoreason,gotnoshameGotnofamilyIcanblameJustdon'tletmedisappearI'matellyoueverythingSotellmewhatyouwanttohearSomethingthatwilllightthoseearsSickofalltheinsincereSoI'mgonnagiveallmysecretsawayThistime,don'tneedanotherperfectlieDon'tcareifcriticseverjumpinlineI'mgonnagiveallmysecretsawaySotellmewhatyouwanttohearSomethingthatwilllightthoseearsSickofalltheinsincereSoI'mgonnagiveallmysecretsawayThistime,don'tneedanotherperfectlieDon'tcareifcriticseverjumpinlineI'mgonnagiveallmysecretsawayAllmysecretsaway,allmysecretsaway";
+
+       int[] coded = new int[secret.length()];
+
+       for(int i = 0; i < secret.length(); i++) {
+           coded[i] = (int) secret.charAt(i);
+       }
+
+       return coded;
+    }
+
     /**
      * Map of all message types and their corresponding functions.
      *
      */
     Map<Character, Method> messageTypes = new HashMap<>();
+
+    ArrayList<Snake> clients = new ArrayList<>();
+    ArrayList<Food> foods = new ArrayList<>();
+    Sector[][] sectors = new Sector[Sector.IN_ROW][Sector.IN_ROW];
+
+    /**
+     * Create Sectors
+     *
+     * Creates all sectors.
+     * Note: The following code was based on <a href= "https://github.com/ClitherProject/Slither.io-Protocol/issues/55 ">issue </a>.
+     */
+    default void createSectors() {
+        for(int r = 0; r < sectors.length; r++) {
+            for(int c = 0; c < sectors.length; c++ ) {
+                sectors[r][c] = new Sector(r, c);
+            }
+        }
+    }
 
 
     /**
@@ -40,11 +80,11 @@ interface SlitherServerProtocol {
      */
     default byte[] preInitRequest(int [] data) {
 
-        String secret = "notasecretmessagenotasecretmessagenotasecretmessagenotasecretmessagenotasecretmessage";
-        byte[] extraSecretMessage = new byte[secret.length() + 3];
-        extraSecretMessage[2] = (byte) 54;
-        for(int i = 0; i < secret.length() ; i++) {
-            extraSecretMessage[3 + i] = (byte) secret.charAt(i);
+        byte[] extraSecretMessage = new byte[secret.length + 3];
+        extraSecretMessage[2] = (byte) '6';
+
+        for(int i = 0; i < secret.length; i++) {
+            extraSecretMessage[3 + i] = (byte) secret[i];
         }
         System.out.println("[DEBUG] Server sent preInitRequest");
         return extraSecretMessage;
@@ -72,12 +112,13 @@ interface SlitherServerProtocol {
      * In the initial parts of the client-server interaction, the client sends an add snake process.
      * @return byte array
      */
-    default void addRemoveSnake(int[] data) {
+    default byte[] addRemoveSnake(int[] data) {
         String snakeName = "";
-        for(int i = 4; i < data.length - 4; i++) {
+        for(int i = 4; i < data.length; i++) {
             snakeName += (char) data[i];
         }
-        System.out.println(snakeName);
+
+        return new byte[0];
     }
 
     /**

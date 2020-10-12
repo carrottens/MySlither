@@ -8,13 +8,14 @@ public class Food {
     private final double rsp;
     private final long spawnTime;
 
-    Food(int x, int y, double size, boolean fastSpawn) {
+    public Food(int x, int y, double size, boolean fastSpawn) {
         this.x = x;
         this.y = y;
         this.size = size;
         this.rsp = fastSpawn ? 4 : 1;
         spawnTime = System.currentTimeMillis();
     }
+
 
     double getSize() {
         return size;

@@ -33,13 +33,10 @@ public class SlitherServer extends WebSocketServer implements SlitherServerProto
         }
     }
 
-    private Snake clients[];
-    private Food Food[];
-
     // Note: decodeSecret() is pointless in local servers thus no verification is done
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        System.out.println("[SERVER] Clinent connected to the server");
+        System.out.println("[SERVER] Client connected to the server");
     }
 
     @Override
@@ -114,14 +111,15 @@ public class SlitherServer extends WebSocketServer implements SlitherServerProto
             // Checks for pre-init response and answers with a pre init setup
             // Note: This is compulsory to have as the client does not send the s packet until after completing this phase.
             if (cMessage.length == 24) {
-                if (cMessage == secretAnswer(data)) {
+                if (cMessage == secretAnswer(secret)) {
                     System.out.println("[DEBUG] Server received preInitResponse");
                     conn.send(createInitSetup(data));
                 }
+                return;
             }
 
             try {
-                System.out.println("[DEBUG] Server received " + (char) cMessage[0]+ "at data length > 0");
+                System.out.println("[DEBUG] Server received " + (char) cMessage[0]+ " at data length > 0");
                 byte[] messageToClient = (byte[]) messageTypes.get((char) cMessage[0]).invoke(this, data);
                 if (messageToClient.length > 0) {
                     conn.send(messageToClient);
@@ -142,6 +140,8 @@ public class SlitherServer extends WebSocketServer implements SlitherServerProto
     @Override
     public void onStart() {
         System.out.println("[Server] Server started successfully!");
+        System.out.println("[Server] Generating Sectors AND Food");
+        createSectors();
     }
 
     @Override

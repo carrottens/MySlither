@@ -191,7 +191,7 @@ final class MySlitherWebSocketClient extends WebSocketClient {
     }
 
     private static byte[] decodeSecret(int[] secret) {
-
+        System.out.println(secret[2]);
         byte[] result = new byte[24];
 
         int globalValue = 0;
