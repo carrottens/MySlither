@@ -545,6 +545,7 @@ final class MySlitherWebSocketClient extends WebSocketClient {
         if (data.length >= 31) {
             int id = (data[3] << 8) | (data[4]);
 
+
             double ang = ((data[5] << 16) | (data[6] << 8) | data[7]) * PI2 / ANGLE_CONSTANT;
             double wang = ((data[9] << 16) | (data[10] << 8) | data[11]) * PI2 / ANGLE_CONSTANT;
 
@@ -573,6 +574,8 @@ final class MySlitherWebSocketClient extends WebSocketClient {
                 currentBodyPartY += (data[nextBodyPartStartPosition + 1] - 127) / 2.0;
                 body.addFirst(new SnakeBodyPart(currentBodyPartX, currentBodyPartY));
             }
+
+            System.out.println(model.gameRadius);
 
             model.addSnake(id, name.toString(), x, y, wang, ang, sp, fam, body);
         } else if (data.length == 6) {

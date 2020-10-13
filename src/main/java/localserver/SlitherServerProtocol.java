@@ -1,10 +1,12 @@
 package localserver;
 
+import com.sun.jmx.remote.internal.ArrayQueue;
+import de.mat2095.my_slither.SnakeBodyPart;
 import de.mat2095.my_slither.Food;
-import de.mat2095.my_slither.Snake;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.ArrayList;
 
@@ -113,12 +115,73 @@ interface SlitherServerProtocol {
      * @return byte array
      */
     default byte[] addRemoveSnake(int[] data) {
+
         String snakeName = "";
-        for(int i = 4; i < data.length; i++) {
+        for (int i = 4; i < data.length; i++) {
             snakeName += (char) data[i];
         }
+        clients.add(new Snake(clients.size(), snakeName,
+            100, 100, 16074184, 48, 5790, 16074184, 0, new LinkedList<>()));
+        byte[] message = new byte[snakeName.length() + 34];
 
-        return new byte[0];
+        message[0] = 0;
+        message[1] = 0;
+        message[2] = (byte) 's';
+
+
+        message[3] = 0;
+        message[4] = 1;
+
+        message[5] = (byte) 0x5e;
+        message[6] = (byte) 0xf6;
+        message[7] = (byte) 0xab;
+
+        message[8] = (byte) 0x30;
+
+        message[9] = (byte) 0x5e;
+        message[10] = (byte) 0xf6;
+        message[11] = (byte) 0xab;
+
+        message[12] = (byte) 0x16;
+        message[13] = (byte) 0x9e;
+
+        message[14] = 0;
+        message[15] = 0;
+        message[16] = 0;
+
+        message[17] = 0;
+
+        message[18] = (byte) 0x01;
+        message[19] = (byte) 0x81;
+        message[20] = (byte) 0xce;
+
+        message[21] = (byte) 0x02;
+        message[22] = (byte) 0x13;
+        message[23] = (byte) 0x40;
+
+        message[24] = (byte) snakeName.length();
+
+        for(int i = 0; i < snakeName.length(); i++) {
+            message[25 + i] = (byte) snakeName.charAt(i);
+        }
+        message[25 + snakeName.length()] = 0;
+
+        //Custom-skin-data is skipped
+
+        message[26 + snakeName.length()] = (byte) 0x01;
+        message[27 + snakeName.length()] = (byte) 0x82;
+        message[28 + snakeName.length()] = (byte) 0x5e;
+
+        message[29 + snakeName.length()] = (byte) 0x02;
+        message[30 + snakeName.length()] = (byte) 0x12;
+        message[31 + snakeName.length()] = (byte) 0xa8;
+
+        message[32 + snakeName.length()] = (byte) 0x45;
+
+        message[33 + snakeName.length()] = (byte) 0xbb;
+
+        System.out.println("[DEBUG] Server sent s");
+        return message;
     }
 
     /**

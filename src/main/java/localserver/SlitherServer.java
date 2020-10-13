@@ -110,17 +110,16 @@ public class SlitherServer extends WebSocketServer implements SlitherServerProto
 
             // Checks for pre-init response and answers with a pre init setup
             // Note: This is compulsory to have as the client does not send the s packet until after completing this phase.
-            if (cMessage.length == 24) {
-                if (cMessage == secretAnswer(secret)) {
-                    System.out.println("[DEBUG] Server received preInitResponse");
-                    conn.send(createInitSetup(data));
-                }
+            if (cMessage.length == 24 && (char) cMessage[0] == 'i') {
+                System.out.println("[DEBUG] Server received preInitResponse");
+                conn.send(createInitSetup(data));
                 return;
             }
 
             try {
                 System.out.println("[DEBUG] Server received " + (char) cMessage[0]+ " at data length > 0");
                 byte[] messageToClient = (byte[]) messageTypes.get((char) cMessage[0]).invoke(this, data);
+
                 if (messageToClient.length > 0) {
                     conn.send(messageToClient);
                 }

@@ -3,7 +3,7 @@ package de.mat2095.my_slither;
 import java.util.Deque;
 
 
-public class Snake {
+class Snake {
 
     final int id;
     final String name;
