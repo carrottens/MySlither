@@ -72,38 +72,48 @@ public class SlitherServer extends WebSocketServer implements SlitherServerProto
         }
 
         if (cMessage.length == 1) {
+            System.out.println("[DEBUG] Server received " + (char) cMessage[0] + " at data length == 1.");
 
-            // Checks if packet's data is ping
-            if (data[0] == 251) {
+            if (data[0] == 99) {
+                try {
+                    byte[] messageToClient = (byte[]) messageTypes.get((char) cMessage[0]).invoke(this, data);
+                    conn.send(messageToClient);
+
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    System.out.println("[ERROR]");
+                    for(int by : data) {
+                        System.out.println(by);
+                    }
+                }
+
+            } else if (data[0] == 251) { // Checks if packet's data is ping
                 System.out.println("[DEBUG] Server received ping data");
                 dataPingPong(data);
 
                 return;
+            } else if (data[0] <= 250) {  // Package when the client's snake is updating himself
+                clients.get(0).directionAng = data[0] / 250 * (Math.PI * 180);
+                clients.get(0).directionX = Math.cos(clients.get(0).directionAng) + 1;
+                clients.get(0).directionY = Math.sin(clients.get(0).directionAng) + 1;
+                clients.get(0).x += clients.get(0).directionX;
+                clients.get(0).y += clients.get(0).directionY;
+
+                return;
             } else if (data[0] == 253) {
                 //Data Boost Start
+                return;
             } else if (data[0] == 254) {
                 //Data Boost Stop
+                return;
             }
 
 
 
             // Checks for the first packet sent by the client
             // If true: Sends the initial setup. (Note: the pre-init response is skipped)
-            try {
-                System.out.println("[DEBUG] Server received " + (char) cMessage[0] + " at data length == 1.");
-                byte[] messageToClient = (byte[]) messageTypes.get((char) cMessage[0]).invoke(this, data);
-
-                conn.send(messageToClient);
-
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                System.out.println("[ERROR]");
-                for(int by : data) {
-                    System.out.println(by);
-                }
-            }
 
 
         } else {
@@ -122,6 +132,10 @@ public class SlitherServer extends WebSocketServer implements SlitherServerProto
 
                 if (messageToClient.length > 0) {
                     conn.send(messageToClient);
+                    if((char) cMessage[0] == 's') {
+                        System.out.println('s');
+                        conn.send(moveSnake());
+                    }
                 }
 
             } catch (IllegalAccessException e) {

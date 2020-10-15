@@ -191,7 +191,6 @@ final class MySlitherWebSocketClient extends WebSocketClient {
     }
 
     private static byte[] decodeSecret(int[] secret) {
-        System.out.println(secret[2]);
         byte[] result = new byte[24];
 
         int globalValue = 0;
@@ -329,7 +328,9 @@ final class MySlitherWebSocketClient extends WebSocketClient {
         }
 
         synchronized (view.modelLock) {
+
             Snake snake = model.getSnake(snakeID);
+            System.out.println(snake.x);
             if (newDir != -1) {
                 snake.dir = newDir;
             }
@@ -379,7 +380,7 @@ final class MySlitherWebSocketClient extends WebSocketClient {
         }
     }
 
-    private void processUpdateSnakePosition(int[] data, char cmd) {
+    private synchronized void processUpdateSnakePosition(int[] data, char cmd) {
 
         boolean absoluteCoords = cmd == 'g' || cmd == 'n';
         boolean newBodyPart = cmd == 'n' || cmd == 'N';

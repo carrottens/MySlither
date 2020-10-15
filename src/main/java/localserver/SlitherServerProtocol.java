@@ -71,7 +71,51 @@ interface SlitherServerProtocol {
         }
     }
 
+    /**
+     * Message Type: e
+     *
+     */
+    default byte[] rotateSnake() {
+        byte[] message = new byte[8];
 
+        message[0] = 0;
+        message[1] = 0;
+
+        message[2] = (byte) 'e';
+
+        message[3] = 0;
+        message[4] = 1;
+
+        message[5] = (byte) ((int) clients.get(0).directionAng * 256 / (2 * Math.PI));
+        message[6] = (byte) ((int) clients.get(0).directionAng * 256 / (2 * Math.PI));
+
+        message[7] = (byte) ((int) clients.get(0).sp * 18);
+        return message;
+    }
+
+    /**
+     * Message type: g
+     */
+    default byte[] moveSnake() {
+        byte[] message = new byte[9];
+
+        message[0] = 0;
+        message[0] = 0;
+        message[1] = 0;
+
+        message[2] = (byte) 'g';
+
+        message[3] = 0;
+        message[4] = 1;
+
+        message[5] = (byte) ((byte) ((int) Math.round(clients.get(0).x) >> 8) & 0xFF);
+        message[6] = (byte) ((int) Math.round(clients.get(0).x) & 0xFF);
+
+        message[7] = (byte) ((byte) ((int) Math.round(clients.get(0).y) >> 8) & 0xFF);
+        message[8] = (byte) ((byte) ((int) Math.round(clients.get(0).y) & 0xFF));
+
+        return message;
+    }
     /**
      * Message type: 6
      * Originates: packet c
@@ -121,7 +165,10 @@ interface SlitherServerProtocol {
             snakeName += (char) data[i];
         }
         clients.add(new Snake(clients.size(), snakeName,
-            100, 100, 16074184, 48, 5790, 16074184, 0, new LinkedList<>()));
+            98766 * 5, 136000 * 5,
+            5.69941607541398 / 2 / Math.PI * 16777215,
+            5.69941607541398 / 2 / Math.PI * 16777215,
+            5790 / 100, 0, 0));
         byte[] message = new byte[snakeName.length() + 34];
 
         message[0] = 0;
@@ -132,15 +179,15 @@ interface SlitherServerProtocol {
         message[3] = 0;
         message[4] = 1;
 
-        message[5] = (byte) 0x5e;
-        message[6] = (byte) 0xf6;
-        message[7] = (byte) 0xab;
+        message[5] = (byte) 0xe8;
+        message[6] = (byte) 0x37;
+        message[7] = (byte) 0x10;
 
         message[8] = (byte) 0x30;
 
-        message[9] = (byte) 0x5e;
-        message[10] = (byte) 0xf6;
-        message[11] = (byte) 0xab;
+        message[9] = (byte) 0xe8;
+        message[10] = (byte) 0x37;
+        message[11] = (byte) 0x10;
 
         message[12] = (byte) 0x16;
         message[13] = (byte) 0x9e;
@@ -168,17 +215,17 @@ interface SlitherServerProtocol {
 
         //Custom-skin-data is skipped
 
-        message[26 + snakeName.length()] = (byte) 0x01;
-        message[27 + snakeName.length()] = (byte) 0x82;
-        message[28 + snakeName.length()] = (byte) 0x5e;
+        message[26 + snakeName.length()] = (byte) 0x02;
+        message[27 + snakeName.length()] = (byte) 0x35;
+        message[28 + snakeName.length()] = (byte) 0x2d;
 
-        message[29 + snakeName.length()] = (byte) 0x02;
-        message[30 + snakeName.length()] = (byte) 0x12;
-        message[31 + snakeName.length()] = (byte) 0xa8;
+        message[29 + snakeName.length()] = (byte) 0x01;
+        message[30 + snakeName.length()] = (byte) 0x65;
+        message[31 + snakeName.length()] = (byte) 0x43;
 
-        message[32 + snakeName.length()] = (byte) 0x45;
+        message[32 + snakeName.length()] = (byte) 0x87;
 
-        message[33 + snakeName.length()] = (byte) 0xbb;
+        message[33 + snakeName.length()] = (byte) 0xd2;
 
         System.out.println("[DEBUG] Server sent s");
         return message;
