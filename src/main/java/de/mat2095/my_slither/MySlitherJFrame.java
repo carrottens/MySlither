@@ -107,6 +107,11 @@ final class MySlitherJFrame extends JFrame {
     MySlitherModel model;
     final Object modelLock = new Object();
 
+
+    public long getPing() throws NullPointerException {
+        return client.getPingtime();
+    }
+
     MySlitherJFrame() {
         super("MySlither");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -217,7 +222,7 @@ final class MySlitherJFrame extends JFrame {
         log.setLineWrap(true);
         log.setFont(Font.decode("Monospaced 11"));
         log.setTabSize(4);
-        log.getCaret().setSelectionVisible(false);
+         log.getCaret().setSelectionVisible(false);
         log.getInputMap().clear();
         log.getActionMap().clear();
         log.getInputMap().put(KeyStroke.getKeyStroke("END"), "gotoEnd");

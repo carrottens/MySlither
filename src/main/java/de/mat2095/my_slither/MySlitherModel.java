@@ -213,6 +213,7 @@ class MySlitherModel {
         }
     }
 
+
     void removeFood(int x, int y) {
         synchronized (view.modelLock) {
             foods.remove(y * gameRadius * 3 + x);

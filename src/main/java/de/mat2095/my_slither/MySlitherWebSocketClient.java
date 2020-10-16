@@ -33,7 +33,7 @@ final class MySlitherWebSocketClient extends WebSocketClient {
     private MySlitherModel model;
 
     private byte[] initRequest;
-    private long lastAngleTime, lastPingTime;
+    private long lastAngleTime, lastPingTime, pingTime;
     private byte lastAngleContent, angleToBeSent;
     private boolean lastBoostContent;
     private boolean waitingForPong;
@@ -47,6 +47,10 @@ final class MySlitherWebSocketClient extends WebSocketClient {
     MySlitherWebSocketClient(URI serverUri, MySlitherJFrame view) {
         super(serverUri, new Draft_6455(), HEADER);
         this.view = view;
+    }
+
+    public long getPingtime() {
+        return pingTime;
     }
 
     void sendData(Player.Wish wish) {
@@ -508,7 +512,7 @@ final class MySlitherWebSocketClient extends WebSocketClient {
             view.log("pong wrong length!");
             return;
         }
-
+        pingTime = System.currentTimeMillis() - lastPingTime;
         waitingForPong = false;
     }
 

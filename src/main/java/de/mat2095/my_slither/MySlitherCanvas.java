@@ -21,7 +21,7 @@ final class MySlitherCanvas extends JPanel {
     private static final Color BACKGROUND_COLOR = new Color(0x2B2B2B);
     private static final Color FOREGROUND_COLOR = new Color(0xA9B7C6);
     private static final Color SECTOR_COLOR = new Color(0x803C3F41, true);
-    private static final Color FOOD_COLOR = new Color(0xCC7832);
+    private static final Color FOOD_COLOR = new Color(0x6032CC);
     private static final Color PREY_COLOR = new Color(0xFFFF00);
     private static final float[] PREY_HALO_FRACTIONS = new float[]{0.5f, 1f};
     private static final Color[] PREY_HALO_COLORS = new Color[]{new Color(0x60FFFF00, true), new Color(0x00FFFF00, true)};
@@ -289,10 +289,21 @@ final class MySlitherCanvas extends JPanel {
         g.setFont(DEBUG_FONT);
         g.setColor(FOREGROUND_COLOR);
         long newFrameTime = System.currentTimeMillis();
+
         if (newFrameTime > lastFrameTime) {
             fps = 0.95 * fps + 0.05 * 1000.0 / (newFrameTime - lastFrameTime);
         }
+
+        long ping;
+        try {
+            ping = view.getPing();
+        } catch (NullPointerException e) {
+            ping = 0;
+        }
+
         g.drawString("FPS: " + Math.round(fps), 0, g.getFontMetrics().getAscent());
+        g.drawString("PING: " + Math.round(ping), 0, g.getFontMetrics().getAscent() + 20);
+
         lastFrameTime = newFrameTime;
     }
 }
